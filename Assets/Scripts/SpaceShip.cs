@@ -115,54 +115,6 @@ public class SpaceShip : MonoBehaviour
                                 break;
                         }
                     }
-                    //switch (dir)
-                    //{
-                    //    case "Right":
-                    //        tilePosition += directions[0];
-                    //        break;
-                    //    case "Left":
-                    //        tilePosition += directions[1];
-                    //        break;
-                    //    case "UpLeft":
-                    //        if(currentPosition.y % 2 == 1)
-                    //        {
-                    //            tilePosition += directions[2];
-                    //        } else
-                    //        {
-                    //            tilePosition += directions[3];
-                    //        }
-                    //        break;
-                    //    case "UpRight":
-                    //        if (currentPosition.y % 2 == 1)
-                    //        {
-                    //            tilePosition += directions[4];
-                    //        }
-                    //        else
-                    //        {
-                    //            tilePosition += directions[5];
-                    //        }
-                    //        break;
-                    //    case "DownLeft":
-                    //        if (currentPosition.y % 2 == 1)
-                    //        {
-                    //            tilePosition += directions[6];
-                    //        }
-                    //        else
-                    //        {
-                    //            tilePosition += directions[7];
-                    //        }
-                    //        break;
-                    //    case "DownRight":
-                    //        if (currentPosition.y % 2 == 1)
-                    //        {
-                    //            tilePosition += directions[8];
-                    //        }
-                    //        else
-                    //        {
-                    //            tilePosition += directions[9];
-                    //        }
-                    //        break;
-                    //}
                     currentPosition = tilePosition;
                     tilemap.SetTile(tilePosition, highlightTile);
                 }
