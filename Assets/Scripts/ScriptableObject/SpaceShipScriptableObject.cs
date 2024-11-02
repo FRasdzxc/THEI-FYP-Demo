@@ -7,5 +7,5 @@ public class SpaceShipScriptableObject : ScriptableObject
     public float speed;
     public float health;
     public float damage;
-    public Sprite spaceshipSprite;
+    public Sprite sprite;
 }
