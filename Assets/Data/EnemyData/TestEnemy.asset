@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: 
   speed: 0
-  health: 0
-  damage: 0
+  health: 10
+  damage: 1
   sprite: {fileID: 0}
