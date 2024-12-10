@@ -10,23 +10,22 @@ public class SpaceShip : MonoBehaviour
     private bool selected;
     private float health;
     private float damage;
-    private List<Enemy> enemies = new List<Enemy>();
     private Vector3Int currentPosition = new Vector3Int();
 
     void Start()
     {
+        health = spaceShipSO.health;
+        damage = spaceShipSO.damage;
         hasMoved = false;
     }
-
-    void CheckBattle(Vector3Int cell)
+    public void ResetRound()
     {
-        foreach(Enemy enemy in enemies)
-        {
-            if(enemy.GetCell() == cell)
-            {
-                enemy.DestroyObject();
-            }
-        }
+        selected = false;
+        hasMoved = false;
+    }
+    public void AdjustHealth(float x)
+    {
+        health += x;
     }
     public void SetSelected(bool x)
     {
@@ -36,6 +35,18 @@ public class SpaceShip : MonoBehaviour
     {
         currentPosition = cell;
     }
+    public void SetHasMoved(bool moved)
+    {
+        hasMoved = moved;
+    }
+    public float GetHealth()
+    {
+        return health;
+    }
+    public float GetDamage()
+    {
+        return damage;
+    }
     public bool GetSelected()
     {
         return selected;
@@ -43,5 +54,13 @@ public class SpaceShip : MonoBehaviour
     public Vector3Int GetCell()
     {
         return currentPosition;
+    }
+    public bool GetHasMoved()
+    {
+        return hasMoved;
+    }
+    public void DestroyObject()
+    {
+        Destroy(this.gameObject);
     }
 }

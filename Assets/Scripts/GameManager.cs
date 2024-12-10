@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private InformationRecorder ir;
+    private TilemapController tmCtr;
     private enum GameState { PlayerTurn, EnemyTurn }
     private GameState currentState;
     // Start is called before the first frame update
     void Start()
     {
+        ir = GameObject.FindWithTag("EventSystem").GetComponent<InformationRecorder>();
+        tmCtr = GameObject.FindWithTag("EventSystem").GetComponent<TilemapController>();
         currentState = GameState.PlayerTurn;
         StartCoroutine(GameLoop());
     }
@@ -22,6 +26,11 @@ public class GameManager : MonoBehaviour
                 case GameState.PlayerTurn:
                     Debug.Log("Player's Turn");
                     yield return new WaitUntil(() => PlayerActionDone());
+                    foreach(SpaceShip spaceship in ir.GetSpaceShips())
+                    {
+                        spaceship.ResetRound();
+                    }
+                    tmCtr.ResetRound();
                     currentState = GameState.EnemyTurn;
                     break;
                 case GameState.EnemyTurn:

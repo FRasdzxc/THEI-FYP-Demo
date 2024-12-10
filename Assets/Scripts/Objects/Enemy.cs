@@ -11,13 +11,13 @@ public class Enemy : MonoBehaviour
         health = enemySO.health;
         damage = enemySO.damage;
     }
-    public void SetHealth(float health)
+    public void AdjustHealth(float x)
     {
-        this.health = health;
+        health += x;
     }
-    public void SetDamage(float damage)
+    public void AdjustDamage(float x)
     {
-        this.damage = damage;
+        damage += x;
     }
     public void SetCell(Vector3Int cell)
     {
@@ -25,11 +25,11 @@ public class Enemy : MonoBehaviour
     }
     public float GetHealth()
     {
-        return this.health;
+        return health;
     }
     public float GetDamage()
     {
-        return this.damage;
+        return damage;
     }
     public Vector3Int GetCell()
     {

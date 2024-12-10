@@ -6,16 +6,40 @@ using UnityEngine.Tilemaps;
 public class TilemapController : MonoBehaviour
 {
     public Tilemap tilemap;
-    public Tile normalTile;
+    public AnimatedTile normalTile;
     public Tile highlightTile;
     public Tile selectedTile;
     public enum Tiles { normal, highlight, selected }
     public enum SelectedType { player, enemy, tile , highlight}
+    private InformationRecorder ir;
     private Vector3Int currentPosition = new Vector3Int();
     private Vector3Int previousTilePosition = new Vector3Int(100, 100, 0);
     private Vector3Int tilePosition = new Vector3Int();
     private bool selected = false;
+    private bool colide = false;
     private SelectedType previousSelectedType;
+    private int previousSpeed;
+    private void Start()
+    {
+        ir = GameObject.FindWithTag("EventSystem").GetComponent<InformationRecorder>();
+    }
+    public void ResetRound()
+    {
+        if(selected)
+        {
+            switch (previousSelectedType)
+            {
+                case SelectedType.player:
+                    ChangeTiles(previousTilePosition, Tiles.normal, previousSpeed);
+                    tilemap.SetTile(previousTilePosition, normalTile);
+                    break;
+                case SelectedType.tile:
+                    tilemap.SetTile(previousTilePosition, normalTile);
+                    break;
+            }
+            selected = false;
+        }
+    }
 
     public void Clicked(Vector3Int cell, int speed, SelectedType type)
     {
@@ -34,6 +58,7 @@ public class TilemapController : MonoBehaviour
                     break;
             }
             previousTilePosition = cell;
+            previousSpeed = speed;
             selected = true;
         }
         else
@@ -44,6 +69,7 @@ public class TilemapController : MonoBehaviour
                 {
                     case SelectedType.player:
                         ChangeTiles(cell, Tiles.normal, speed);
+                        tilemap.SetTile(cell, normalTile);
                         break;
                     case SelectedType.tile:
                         tilemap.SetTile(cell, normalTile);
@@ -87,10 +113,11 @@ public class TilemapController : MonoBehaviour
     public void ChangeTiles(Vector3Int cellPosition, Tiles t, int speed)
     {
         Tile tile = null;
+        AnimatedTile aTile = null;
         switch (t)
         {
             case Tiles.normal:
-                tile = normalTile;
+                aTile = normalTile;
                 break;
             case Tiles.highlight:
                 tile = highlightTile;
@@ -127,69 +154,113 @@ public class TilemapController : MonoBehaviour
             tilePosition = cellPosition;
             for (int i = 0; i <= speed; i++)
             {
-                if (currentPosition.y < 0)
+                if(!colide)
                 {
-                    currentPosition.y *= -1;
-                }
-                switch (dir)
-                {
-                    case "Left":
-                        tilePosition += directions[0];
-                        break;
-                    case "Right":
-                        tilePosition += directions[1];
-                        break;
-                    default:
-                        break;
-                }
-                if (currentPosition.y % 2 == 1)
-                {
+                    if (currentPosition.y < 0)
+                    {
+                        currentPosition.y *= -1;
+                    }
                     switch (dir)
                     {
-                        case "UpLeft":
-                            tilePosition += directions[2];
+                        case "Left":
+                            tilePosition += directions[0];
                             break;
-                        case "UpRight":
-                            tilePosition += directions[4];
-                            break;
-                        case "DownLeft":
-                            tilePosition += directions[6];
-                            break;
-                        case "DownRight":
-                            tilePosition += directions[8];
+                        case "Right":
+                            tilePosition += directions[1];
                             break;
                         default:
                             break;
+                    }
+                    if (currentPosition.y % 2 == 1)
+                    {
+                        switch (dir)
+                        {
+                            case "UpLeft":
+                                tilePosition += directions[2];
+                                break;
+                            case "UpRight":
+                                tilePosition += directions[4];
+                                break;
+                            case "DownLeft":
+                                tilePosition += directions[6];
+                                break;
+                            case "DownRight":
+                                tilePosition += directions[8];
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (dir)
+                        {
+                            case "UpLeft":
+                                tilePosition += directions[3];
+                                break;
+                            case "UpRight":
+                                tilePosition += directions[5];
+                                break;
+                            case "DownLeft":
+                                tilePosition += directions[7];
+                                break;
+                            case "DownRight":
+                                tilePosition += directions[9];
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    int index = 0;
+                    foreach (Vector3Int x in ir.GetTileObjectList())
+                    {
+                        if(x != tilePosition || t == Tiles.normal)
+                        {
+                            if(index == ir.GetTileObjectList().Count - 1)
+                            {
+                                currentPosition = tilePosition;
+                                tilemap.SetTile(tilePosition, tile);
+                            }
+                            index++;
+                        }
+                        else
+                        {
+                            foreach(SpaceShip spaceship in ir.GetSpaceShips())
+                            {
+                                if(spaceship.GetCell() == tilePosition)
+                                {
+                                    break;
+                                }
+                            }
+                            foreach(Enemy enemy in ir.GetEnemies())
+                            {
+                                if(enemy.GetCell() == tilePosition)
+                                {
+                                    currentPosition = tilePosition;
+                                    tilemap.SetTile(tilePosition, tile);
+                                    break;
+                                }
+                            }
+                            colide = true;
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    switch (dir)
-                    {
-                        case "UpLeft":
-                            tilePosition += directions[3];
-                            break;
-                        case "UpRight":
-                            tilePosition += directions[5];
-                            break;
-                        case "DownLeft":
-                            tilePosition += directions[7];
-                            break;
-                        case "DownRight":
-                            tilePosition += directions[9];
-                            break;
-                        default:
-                            break;
-                    }
+                    colide = false;
+                    break;
                 }
-                currentPosition = tilePosition;
-                tilemap.SetTile(tilePosition, tile);
             }
         }
     }
     public Tile GetTile(Vector3Int cell)
     {
         return (Tile) tilemap.GetTile(cell);
+    }
+    public bool GetSelected()
+    {
+        return selected;
     }
     public Tiles GetTileType(Vector3Int cell)
     {
