@@ -118,10 +118,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: 7ce1482190643324aab55114000851c6
@@ -139,10 +145,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: 24a52a7d194a8984d8f427ff123edad6
@@ -160,10 +172,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: 95ffe0bc5eeb40e4697fbff8bd3bcd6d
@@ -181,10 +199,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: 2e00ad958f48ebc45b2088729739f0ea

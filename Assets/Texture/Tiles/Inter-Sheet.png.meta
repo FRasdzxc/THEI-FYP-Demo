@@ -118,10 +118,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 32, y: -15}
+        - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
       tessellationDetail: 0
       bones: []
       spriteID: c021f75ce91ca3544aa9dd0da61b488c
@@ -139,10 +145,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: d9f0831828bd1d54e8de5443db531973
@@ -160,10 +172,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
+        - {x: 0, y: -31}
       tessellationDetail: 0
       bones: []
       spriteID: 2f2762bc5236d1841b385c547322b170
@@ -181,10 +199,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: daba36086fb2b314e96ac7bd550ab316

@@ -4,82 +4,55 @@ using UnityEngine.Tilemaps;
 
 public class InformationRecorder : MonoBehaviour
 {
-    public Tilemap tilemap;
-    private GameObject[] enemies;
-    private List<Enemy> enemiesData = new List<Enemy>();
-    private GameObject[] spaceships;
-    private List<SpaceShip> spaceshipsData = new List<SpaceShip>();
-    private List<Vector3Int> objectList = new List<Vector3Int>();
-    public void UpdateEnemies()
+    public static InformationRecorder Instance { get; private set; }
+    [SerializeField] private Tilemap indicatorTilemap;
+    [SerializeField] private Tilemap groundTilemap;
+    [SerializeField] private Tilemap planetTilemap;
+    [SerializeField] private HexagonalTilemapGenerator tilemapGenerator;
+    private void Awake()
     {
-        if(enemiesData.Count > 0)
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+    public Planet FindPlanet(Vector3Int? position)
+    {
+        List<Planet> planets = tilemapGenerator.GetAllPlanets();
+        foreach(Planet planet in planets)
         {
-            enemiesData.Clear();
-        }
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        if(enemies.Length > 0)
-        {
-            foreach (GameObject enemy in enemies)
+            if(planet.t_position == (Vector3Int) position)
             {
-                Enemy data = (Enemy) enemy.GetComponent("Enemy");
-                Vector3 worldPosition = enemy.transform.position;
-                Vector3Int cellPosition = tilemap.WorldToCell(worldPosition);
-                cellPosition.z = 0;
-                data.SetCell(cellPosition);
-                SetTileObjectList(cellPosition);
-                enemiesData.Add(data);
-                //Debug.Log(enemy.name + ": (" + cellPosition.x + ", " + cellPosition.y + ")");
-                //Debug.Log("Health: " + data.GetHealth() + "\nDamage: " + data.GetDamage());
+                return planet;
             }
         }
+        return null;
     }
-    public void UpdateSpaceShips()
+    public List<Vector3Int> GetAllSpaceships()
     {
-        if(spaceshipsData.Count > 0)
+        List<Spaceship> spaceships = SpaceshipManager.Instance.GetAllSpaceships();
+        List<Vector3Int> t_spaceships = new List<Vector3Int>();
+        foreach(Spaceship spaceship in spaceships)
         {
-            spaceshipsData.Clear();
+            t_spaceships.Add(spaceship.t_position);
         }
-        spaceships = GameObject.FindGameObjectsWithTag("Player");
-        if(spaceships.Length > 0)
+        return t_spaceships;
+    }
+    public List<Vector3Int> GetAllPlanets()
+    {
+        List<Planet> planets = tilemapGenerator.GetAllPlanets();
+        List<Vector3Int> t_planets = new List<Vector3Int>();
+        foreach(Planet planet in planets)
         {
-            foreach(GameObject spaceship in spaceships)
-            {
-                SpaceShip data = (SpaceShip)spaceship.GetComponent("SpaceShip");
-                Vector3 worldPosition = spaceship.transform.position;
-                Vector3Int cellPosition = tilemap.WorldToCell(worldPosition);
-                cellPosition.z = 0;
-                data.SetCell(cellPosition);
-                SetTileObjectList(cellPosition);
-                spaceshipsData.Add(data);
-                //Debug.Log(spaceship.name + ": (" + cellPosition.x + ", " + cellPosition.y + ")");
-            }
+            t_planets.Add(planet.t_position);
         }
+        return t_planets;
     }
-    public void SetTileObjectList(Vector3Int cell)
+    public List<Vector3Int> GetAllObjects()
     {
-        objectList.Add(cell);
-    }
-    public void UpdateTileObjectList()
-    {
-        if (objectList.Count > 0)
-        {
-            objectList.Clear();
-        }
-    }
-    public void DeleteTileObjectList(Vector3Int cell)
-    {
-        objectList.Remove(cell);
-    }
-    public List<Vector3Int> GetTileObjectList()
-    {
-        return objectList;
-    }
-    public List<Enemy> GetEnemies()
-    {
-        return enemiesData;
-    }
-    public List<SpaceShip> GetSpaceShips()
-    {
-        return spaceshipsData;
+        List<Vector3Int> objects = new List<Vector3Int>();
+        objects.AddRange(GetAllPlanets());
+        objects.AddRange(GetAllSpaceships());
+        return objects;
     }
 }

@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73474d11fecab5449da3476791612d3, type: 3}
+  m_Name: OuterSpace
+  m_EditorClassIdentifier: 
+  planetNames:
+  - Alderaan
+  - Betelgeuse
+  - Ceres
+  - DeltaV
+  - Elysium
+  - Faelon
+  - Galatea
+  - Hyperion
+  - Icarus
+  - Juno
+  - Kepler
+  - Lyra
+  - Mimas
+  - Nova
+  - Orion
+  - Phaedra
+  - Quasar
+  - Rigel
+  - Sirius
+  - Triton
+  - Umbra
+  - Vega
+  - Wraith
+  - Xenon
+  - Yavin
+  - Zephyr
+  - Altair
+  - Borealis
+  - Callisto
+  - Draconis
+  - Erebos
+  - Fortuna
+  - Ganymede
+  - Halcyon
+  - Ionia
+  - Jove
+  - Kronos
+  - Luminis
+  - Metis
+  - Nemesis
+  - Obsidian
+  - Phoenix
+  - Quantum
+  - Rhea
+  - Sagan
+  - Thalassa
+  - Utopia
+  - Vortex
+  - Wyvern
+  - Xerxes
+  - Ymir
+  - Zaurak
+  - Aether
+  - Balor
+  - Caelum
+  - Deimos
+  - Elysia
+  - Fornax
+  - Gaia
+  - Helios
+  - Ignis
+  - Janus
+  - Krios
+  - Lira
+  - Maia
+  - Nereid
+  - Oberon
+  - Pallas
+  - Quillon
+  - Riven
+  - Selene
+  - Titania
+  - Ursa
+  - Vesper
+  - Warden
+  - Xandar
+  - Yara
+  - Zeta
+  - Avalon
+  - Boreal
+  - Cygnus
+  - Draco
+  - Eon
+  - Fomalhaut
+  - Gemini
+  - Hesperia
+  - Io
+  - Jorel
+  - Kestrel
+  - Lothar
+  - Mistral
+  - Nyx
+  - Orpheus
+  - Pax
+  - Qwin
+  - Rhys
+  - Solara
+  - Thorne
+  - Ulric
+  - Vela
+  fuelRange:
+    minValue: 400
+    maxValue: 450
+  bioMassRange:
+    minValue: 400
+    maxValue: 450
+  asteroidOreRange:
+    minValue: 400
+    maxValue: 450
+  darkMatterRange:
+    minValue: 200
+    maxValue: 250
+  solarCrystalRange:
+    minValue: 200
+    maxValue: 250
+  alienSpawnChance: 1
+  resourceLimit: 5000
+  minSoldiers: 5000
+  maxSoldiers: 20000
+  weaponTierMin: 2
+  weaponTierMax: 3
+  planetSprites:
+  - {fileID: 11400000, guid: 23d04bbfdcaa4bf4f8ad0dc054d9fd31, type: 2}
+  - {fileID: 11400000, guid: 23d04bbfdcaa4bf4f8ad0dc054d9fd31, type: 2}
+  - {fileID: 11400000, guid: 23d04bbfdcaa4bf4f8ad0dc054d9fd31, type: 2}

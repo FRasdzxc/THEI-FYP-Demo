@@ -10,22 +10,4 @@ public class EventController : MonoBehaviour
     {
         ir = GameObject.FindWithTag("EventSystem").GetComponent<InformationRecorder>();
     }
-    public void Battle(SpaceShip spaceship, Enemy enemy)
-    {
-        do
-        {
-            
-        } while (spaceship.GetHealth() > 0 || enemy.GetHealth() > 0);
-    }
-    public void CheckBattle(SpaceShip spaceship)
-    {
-        foreach (Enemy enemy in ir.GetEnemies())
-        {
-            Debug.Log(enemy.GetCell() + " + " + spaceship.GetCell());
-            if (enemy.GetCell() == spaceship.GetCell())
-            {
-                enemy.DestroyObject();
-            }
-        }
-    }
 }

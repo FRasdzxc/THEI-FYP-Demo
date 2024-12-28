@@ -1,23 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
+// TurnUI.cs
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private GameObject infoPanel;
-    public enum Panels { info}
-    // Start is called before the first frame update
-    void Start()
+    public TextMeshProUGUI turnText;
+    public TextMeshProUGUI playerText;
+    public Button endTurnButton;
+
+    private void Start()
     {
-        
+        endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        UpdateUI();
     }
-    public void TogglePanel(Panels panel, bool toggle)
+
+    private void Update()
     {
-        switch(panel)
-        {
-            case Panels.info:
-                infoPanel.SetActive(toggle);
-                break;
-        }
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        turnText.text = $"Turn: {GameManager.Instance.currentTurn}";
+        playerText.text = $"Player {GameManager.Instance.currentPlayerIndex + 1}'s Turn";
+    }
+
+    private void OnEndTurnClicked()
+    {
+        GameManager.Instance.EndTurn();
     }
 }

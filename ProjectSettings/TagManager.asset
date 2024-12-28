@@ -8,6 +8,7 @@ TagManager:
   - Planet
   - EventSystem
   - Tilemap
+  - Spaceship
   layers:
   - Default
   - TransparentFX

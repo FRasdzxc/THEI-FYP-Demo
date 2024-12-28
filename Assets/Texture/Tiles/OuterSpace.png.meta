@@ -118,10 +118,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: f36a7184c90cc7b4c8dc9241869662c3
@@ -139,10 +145,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: a5ab6545ecca1894abe98949bb4a5e2f
@@ -160,10 +172,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: 383d2a69bcb9d1f49ba0738758391f69
@@ -181,10 +199,16 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: 0, y: -31}
+        - {x: -32, y: -15}
+        - {x: -32, y: 15}
+        - {x: 0, y: 31}
+        - {x: 32, y: 15}
+        - {x: 32, y: -15}
       tessellationDetail: 0
       bones: []
       spriteID: ebc4b16ef1713e04bb007c3c241047b7

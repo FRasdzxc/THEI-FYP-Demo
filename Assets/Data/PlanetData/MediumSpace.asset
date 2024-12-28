@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73474d11fecab5449da3476791612d3, type: 3}
+  m_Name: MediumSpace
+  m_EditorClassIdentifier: 
+  planetNames:
+  - Alderaan
+  - Betelgeuse
+  - Ceres
+  - DeltaV
+  - Elysium
+  - Faelon
+  - Galatea
+  - Hyperion
+  - Icarus
+  - Juno
+  - Kepler
+  - Lyra
+  - Mimas
+  - Nova
+  - Orion
+  - Phaedra
+  - Quasar
+  - Rigel
+  - Sirius
+  - Triton
+  - Umbra
+  - Vega
+  - Wraith
+  - Xenon
+  - Yavin
+  - Zephyr
+  - Altair
+  - Borealis
+  - Callisto
+  - Draconis
+  - Erebos
+  - Fortuna
+  - Ganymede
+  - Halcyon
+  - Ionia
+  - Jove
+  - Kronos
+  - Luminis
+  - Metis
+  - Nemesis
+  - Obsidian
+  - Phoenix
+  - Quantum
+  - Rhea
+  - Sagan
+  - Thalassa
+  - Utopia
+  - Vortex
+  - Wyvern
+  - Xerxes
+  - Ymir
+  - Zaurak
+  - Aether
+  - Balor
+  - Caelum
+  - Deimos
+  - Elysia
+  - Fornax
+  - Gaia
+  - Helios
+  - Ignis
+  - Janus
+  - Krios
+  - Lira
+  - Maia
+  - Nereid
+  - Oberon
+  - Pallas
+  - Quillon
+  - Riven
+  - Selene
+  - Titania
+  - Ursa
+  - Vesper
+  - Warden
+  - Xandar
+  - Yara
+  - Zeta
+  - Avalon
+  - Boreal
+  - Cygnus
+  - Draco
+  - Eon
+  - Fomalhaut
+  - Gemini
+  - Hesperia
+  - Io
+  - Jorel
+  - Kestrel
+  - Lothar
+  - Mistral
+  - Nyx
+  - Orpheus
+  - Pax
+  - Qwin
+  - Rhys
+  - Solara
+  - Thorne
+  - Ulric
+  - Vela
+  fuelRange:
+    minValue: 200
+    maxValue: 250
+  bioMassRange:
+    minValue: 200
+    maxValue: 250
+  asteroidOreRange:
+    minValue: 200
+    maxValue: 250
+  darkMatterRange:
+    minValue: 100
+    maxValue: 150
+  solarCrystalRange:
+    minValue: 100
+    maxValue: 150
+  alienSpawnChance: 0.8
+  resourceLimit: 2000
+  minSoldiers: 1000
+  maxSoldiers: 5000
+  weaponTierMin: 1
+  weaponTierMax: 2
+  planetSprites:
+  - {fileID: 11400000, guid: 15da80c2954de114a83258a3a7a2d69f, type: 2}
+  - {fileID: 11400000, guid: 763f9c1f6827e4b4ea581fe967989486, type: 2}
