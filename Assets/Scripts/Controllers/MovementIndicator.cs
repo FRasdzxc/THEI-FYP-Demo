@@ -60,7 +60,7 @@ public class MovementIndicator : MonoBehaviour
             currentPosition = cellPosition;
             tilePosition = cellPosition;
 
-            for (int i = 0; i <= speed; i++)
+            for (int i = 0; i < speed; i++)
             {
                 if (!colide)
                 {
@@ -121,6 +121,7 @@ public class MovementIndicator : MonoBehaviour
                     {
                         if(x == tilePosition)
                         {
+                            Debug.Log("Collide" + i);
                             colide = true;
                             break;
                         }
@@ -128,10 +129,9 @@ public class MovementIndicator : MonoBehaviour
                     currentPosition = tilePosition;
                     indicatorTilemap.SetTile(tilePosition, availablePathTile);
                 }
-                else
+                if(i == speed - 1)
                 {
                     colide = false;
-                    break;
                 }
             }
         }

@@ -19,38 +19,38 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2a656a12e34999f45b5223effdfa9452, type: 3}
   fuelTank:
     levels:
-    - value: 100
-      bioMassCost: 100
-      asteroidOreCost: 100
-      darkMatterCost: 100
-      solarCrystalCost: 100
-    - value: 200
-      bioMassCost: 200
-      asteroidOreCost: 200
-      darkMatterCost: 200
-      solarCrystalCost: 200
-    - value: 300
-      bioMassCost: 300
-      asteroidOreCost: 300
-      darkMatterCost: 300
-      solarCrystalCost: 300
+    - value: 40
+      bioMassCost: 55
+      asteroidOreCost: 72
+      darkMatterCost: 10
+      solarCrystalCost: 7
+    - value: 120
+      bioMassCost: 120
+      asteroidOreCost: 151
+      darkMatterCost: 31
+      solarCrystalCost: 20
+    - value: 170
+      bioMassCost: 250
+      asteroidOreCost: 321
+      darkMatterCost: 77
+      solarCrystalCost: 45
   speed:
     levels:
     - value: 4
-      bioMassCost: 100
-      asteroidOreCost: 100
-      darkMatterCost: 100
-      solarCrystalCost: 100
+      bioMassCost: 55
+      asteroidOreCost: 72
+      darkMatterCost: 10
+      solarCrystalCost: 7
     - value: 5
-      bioMassCost: 200
-      asteroidOreCost: 200
-      darkMatterCost: 200
-      solarCrystalCost: 200
+      bioMassCost: 121
+      asteroidOreCost: 100
+      darkMatterCost: 30
+      solarCrystalCost: 22
     - value: 6
-      bioMassCost: 300
-      asteroidOreCost: 300
-      darkMatterCost: 300
-      solarCrystalCost: 300
+      bioMassCost: 150
+      asteroidOreCost: 121
+      darkMatterCost: 70
+      solarCrystalCost: 50
   viewDistance:
     levels:
     - value: 6

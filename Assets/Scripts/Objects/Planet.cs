@@ -5,9 +5,12 @@ using UnityEngine.Tilemaps;
 
 public class Planet : MonoBehaviour
 {
+    [Header("Basic Informations")]
     public string planetName;
     public AnimatedTile planetSprite;
     public Vector3Int t_position;
+    public bool isOwned = false;
+    public bool isHomePlanet = false;
 
     [Header("Resources")]
     public int bioMass;
@@ -29,14 +32,12 @@ public class Planet : MonoBehaviour
     public int weaponTier;
 
     private PlanetDetailsUI detailsUI;
-    private Camera mainCamera;
 
     [Header("Spaceships")]
-    private List<Spaceship> spaceships = new List<Spaceship>();
+    private List<Spaceship> spaceships = new List<Spaceship>(); // Spaceships entered planet
 
     private void Awake()
     {
-        mainCamera = Camera.main;
         detailsUI = FindObjectOfType<PlanetDetailsUI>();
     }
 

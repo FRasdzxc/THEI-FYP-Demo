@@ -1,4 +1,3 @@
-// GameManager.cs
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,27 +12,34 @@ public class GameManager : MonoBehaviour
     public int numberOfPlayers = 2;
     private bool isProcessingTurn = false;
 
-    private InputHandler input;
-    private HexagonalTilemapGenerator tilemapGenerator;
-
     private void Awake()
     {
+        Time.timeScale = 1;
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
-        input = FindObjectOfType<InputHandler>();
-        tilemapGenerator = FindObjectOfType<HexagonalTilemapGenerator>();
     }
-
+    private bool AreAllSpaceshipsDestroyed()
+    {
+        if(InformationRecorder.Instance.GetAllSpaceships().Count <= 0)
+        {
+            return true;
+        }
+        return false;
+    }
+    private void EndGame()
+    {
+        Time.timeScale = 0;
+        PlanetDetailsUI.Instance.HidePanel();
+        PlanetDetailsUI.Instance.ShowGameOverPanel();
+        Debug.Log("All spaceships are destroyed. Game Over!");
+    }
     public void EndTurn()
     {
         if (isProcessingTurn) return;
         PlanetDetailsUI.Instance.HidePanel();
+        PlanetDetailsUI.Instance.ShowSpaceshipInfoPanel(null, false);
         StartCoroutine(ProcessEndTurn());
     }
 
@@ -41,54 +47,67 @@ public class GameManager : MonoBehaviour
     {
         isProcessingTurn = true;
 
-        // Execute all queued movements first
         yield return StartCoroutine(ExecuteQueuedMovements());
 
-        // Update all planets' resources
-        List<Planet> planets = tilemapGenerator.GetAllPlanets();
-        foreach (Planet planet in planets)
-        {
-            planet.UpdateResources();
-        }
+        PlanetsUpdateResources();
 
+        if (AreAllSpaceshipsDestroyed())
+        {
+            EndGame();
+            yield break;
+        }
         // Move to next player
         currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers;
 
-        // If we've gone through all players, advance to next turn
         if (currentPlayerIndex == 0)
         {
             currentTurn++;
         }
 
-        // Reset movement indicators and trigger turn change events
-        MovementIndicator.Instance.ClearIndicators();
         OnTurnChanged();
 
         isProcessingTurn = false;
     }
-
-    private IEnumerator ExecuteQueuedMovements()
-    {
-        // Get all spaceships with queued movements
-        List<Spaceship> spaceships = InputHandler.Instance.GetQueuedSpaceships();
-
-        foreach (Spaceship spaceship in spaceships)
-        {
-            if (spaceship.hasQueuedMove)
-            {
-                spaceship.ExecuteQueuedMovement();
-                yield return new WaitForSeconds(1f); // Wait between each ship's movement
-            }
-            spaceship.ResetSpaceship();
-        }
-        input.ResetValue();
-    }
-
     private void OnTurnChanged()
     {
-        // Implement any logic that should happen when turns change
         Debug.Log($"Turn {currentTurn}, Player {currentPlayerIndex + 1}'s turn");
     }
 
     public bool IsProcessingTurn() => isProcessingTurn;
+    #region Spaceship
+    private IEnumerator ExecuteQueuedMovements()
+    {
+        List<Spaceship> spaceships = new List<Spaceship>(InputHandler.Instance.GetQueuedSpaceships());
+
+        foreach (Spaceship spaceship in spaceships)
+        {
+            if (spaceship.CheckBattle())
+            {
+                EventManager.Instance.ProcessAllEvents();
+                yield return new WaitForSeconds(1f);
+
+            }
+            else if (spaceship.hasQueuedMove)
+            {
+                spaceship.ExecuteQueuedMovement();
+                yield return new WaitForSeconds(1f); // Wait between each ship's movement
+            }
+            if(spaceship != null)
+            {
+                spaceship.ResetSpaceship();
+            }
+        }
+        InputHandler.Instance.ResetValue();
+    }
+    #endregion Spaceship
+    #region Planet
+    private void PlanetsUpdateResources()
+    {
+        List<Planet> planets = InformationRecorder.Instance.GetAllOwnedPlanets(); // Update all planets' resources
+        foreach (Planet planet in planets)
+        {
+            planet.UpdateResources();
+        }
+    }
+    #endregion Planet
 }

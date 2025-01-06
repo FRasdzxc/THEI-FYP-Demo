@@ -1,4 +1,3 @@
-// Spaceship.cs
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
@@ -13,6 +12,7 @@ public class Spaceship : MonoBehaviour
     public Vector3Int t_position; // Position on Tile
     public int ownerPlayerId;
     private Planet inPlanet;
+    bool battle = false;
 
     [Header("Movement")]
     public bool hasMovedThisTurn;
@@ -27,7 +27,9 @@ public class Spaceship : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     [Header("Attributes")]
-    private int currentFuel;
+    public double soldiers;
+    public double weaponTier;
+    public int currentFuel;
     public int fuelTankLevel;
     public int speedLevel;
     public int viewDistanceLevel;
@@ -43,7 +45,6 @@ public class Spaceship : MonoBehaviour
     public int asteroidOre;
     public int darkMatter;
     public int solarCrystal;
-    public int soldiers;
     private void Awake()
     {
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -51,6 +52,8 @@ public class Spaceship : MonoBehaviour
     }
     private void Start()
     {
+        soldiers = 1000;
+        weaponTier = 1;
         UpdateSprite();
         UpdateCollider();
         ResetSpaceship();
@@ -58,29 +61,19 @@ public class Spaceship : MonoBehaviour
     }
     public void UpdateCollider()
     {
-        gameObject.AddComponent<Rigidbody2D>();
-        gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
-        gameObject.AddComponent<PolygonCollider2D>();
-        Vector2[] points = new Vector2[collider2d.points.Length];
-        for (int i = 0; i < collider2d.points.Length; i++)
-        {
-            points[i] = collider2d.points[i];
-        }
-        gameObject.GetComponent<PolygonCollider2D>().points = points;
+        var rb = gameObject.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        var polyCollider = gameObject.AddComponent<PolygonCollider2D>();
+        polyCollider.points = collider2d.points;
+        polyCollider.isTrigger = true;
+        polyCollider.layerOverridePriority = collider2d.layerOverridePriority;
+        polyCollider.offset = collider2d.offset;
 
         // If there are multiple paths (holes in the collider), copy those too
-        if (collider2d.pathCount > 1)
+        for (int i = 1; i < collider2d.pathCount; i++)
         {
-            for (int i = 1; i < collider2d.pathCount; i++)
-            {
-                Vector2[] path = new Vector2[collider2d.GetPath(i).Length];
-                collider2d.GetPath(i).CopyTo(path, 0);
-                gameObject.GetComponent<PolygonCollider2D>().SetPath(i, path);
-            }
+            polyCollider.SetPath(i, collider2d.GetPath(i));
         }
-        gameObject.GetComponent<PolygonCollider2D>().layerOverridePriority = collider2d.layerOverridePriority;
-        gameObject.GetComponent<PolygonCollider2D>().offset = collider2d.offset;
-        gameObject.GetComponent<PolygonCollider2D>().isTrigger = true;
     }
 
     public void RefillFuel()
@@ -93,7 +86,7 @@ public class Spaceship : MonoBehaviour
     public int GetSpeed() => (int) data.speed.levels[speedLevel].value;
     public int GetViewDistance() => (int) data.viewDistance.levels[viewDistanceLevel].value;
     public int GetMaxSoldiers() => (int) data.maxSoldiers.levels[soldiersLevel].value;
-    public int GetWeaponTier() => (int) data.weaponTier.levels[weaponTierLevel].value;
+    public double GetWeaponTier() => (double) data.weaponTier.levels[weaponTierLevel].value;
     public int GetBioMassCapacity() => (int) data.bioMassCapacity.levels[bioMassCapacityLevel].value;
     public int GetAsteroidOreCapacity() => (int) data.asteroidOreCapacity.levels[asteroidOreCapacityLevel].value;
     public int GetDarkMatterCapacity() => (int) data.darkMatterCapacity.levels[darkMatterCapacityLevel].value;
@@ -216,9 +209,11 @@ public class Spaceship : MonoBehaviour
     #region Movement
     public bool CanMove(Vector3Int targetPosition)
     {
-        if (hasMovedThisTurn) return false;
-
-        int distance = CalculateDistance(GetPosition(), targetPosition);
+        int distance = CalculateDistance(t_position, targetPosition);
+        Debug.Log("Spaceship " + spaceshipName + " is moving to " + targetPosition);
+        Debug.Log("hasMovedThisTurn: " + hasMovedThisTurn);
+        Debug.Log($"Distance: {distance}, Fuel: {currentFuel}, Speed: {GetSpeed()}");
+        Debug.Log($"Can move: {currentFuel >= distance && distance <= GetSpeed()}");
         return currentFuel >= distance && distance <= GetSpeed();
     }
 
@@ -240,10 +235,11 @@ public class Spaceship : MonoBehaviour
             }
             return false;
         }
-
-        // Immediate movement logic (existing move code)
         if (!CanMove(targetTile)) return false;
-        int distance = CalculateDistance(GetPosition(), targetPosition);
+        t_queuedMovement = targetTile;
+        queuedMovement = targetPosition;
+        // Immediate movement logic (existing move code)
+        int distance = CalculateDistance(t_position, targetTile);
         currentFuel -= distance;
 
         Vector3 currentPos = transform.position;
@@ -258,16 +254,16 @@ public class Spaceship : MonoBehaviour
 
         moveSequence.OnComplete(() => {
             t_position = targetTile;
-            hasMovedThisTurn = true;
             queuedMovement = null;
             t_queuedMovement = null;
+            battle = false;
         });
 
         return true;
     }
     public void ExecuteQueuedMovement()
     {
-        if (queuedMovement.HasValue)
+        if (queuedMovement.HasValue && !battle)
         {
             if(!gameObject.activeSelf) // in Planet
             {
@@ -281,7 +277,6 @@ public class Spaceship : MonoBehaviour
 
     public void CancelQueuedMovement()
     {
-        queuedMovement = null;
         MovementIndicator.Instance.ClearIndicators();
     }
 
@@ -294,21 +289,12 @@ public class Spaceship : MonoBehaviour
     {
         MovementIndicator.Instance.ClearIndicators();
     }
-    // Smooth rotation to face a point
-    public void FaceTarget(Vector3 targetPosition)
-    {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.DORotate(new Vector3(0, 0, angle - 90), 0.3f);
-    }
 
-    private int CalculateDistance(Vector3 from, Vector3 to)
+    private int CalculateDistance(Vector3Int from, Vector3Int to)
     {
-        //Vector3 tileCenter = .GetCellCenterWorld(tilePosition);
-        Vector3 gameObjectPosition = transform.position;
-
-        //float distance = Vector3.Distance(gameObjectPosition, tileCenter);
-        return 1; // Placeholder
+        HexCoordinates fromHex = HexCoordinates.FromOffsetCoordinates(from);
+        HexCoordinates toHex = HexCoordinates.FromOffsetCoordinates(to);
+        return fromHex.DistanceTo(toHex);
     }
     #endregion
 
@@ -348,25 +334,62 @@ public class Spaceship : MonoBehaviour
         gameObject.GetComponent<PolygonCollider2D>().isTrigger = true;
         this.hasMovedThisTurn = false;
         this.t_queuedMovement = null;
+
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Planet"))
+        if (collision.CompareTag("Planet"))
         {
             Planet planet;
-            if (t_queuedMovement != null) 
+            if (t_queuedMovement != null)
             {
                 planet = InformationRecorder.Instance.FindPlanet(t_queuedMovement);
-            }else
+            }
+            else
             {
                 planet = InformationRecorder.Instance.FindPlanet(t_position);
             }
-            if(planet != null)
+
+            if (planet != null)
             {
                 inPlanet = planet;
-                planet.AddSpaceship(gameObject.GetComponent<Spaceship>());
+                planet.isOwned = true;
+                planet.AddSpaceship(this);
                 gameObject.SetActive(false);
             }
         }
+    }
+    public void ReadyForBattle(Planet planet)
+    {
+        if (planet.hasAlien)
+        {
+            EventManager.Instance.QueueBattleEvent(planet, this);
+            CancelQueuedMovement();
+            battle = true;
+            Debug.Log($"Spaceship {spaceshipName} engaging aliens on {planet.planetName}!");
+        }
+    }
+    public bool CheckBattle()
+    {
+        return battle;
+    }
+    public void DestroyShip()
+    {
+        if (inPlanet != null)
+        {
+            inPlanet.RemoveSpaceship(this);
+        }
+
+        CancelQueuedMovement();
+        AudioManager.Instance.PlayExplodeSFX();
+        InputHandler.Instance.RemoveQueuedSpaceship(this);
+        SpaceshipManager.Instance.RemoveSpaceship(this);
+        Destroy(gameObject);
+    }
+
+    public void OnBattleVictory(Planet planet)
+    {
+        Debug.Log("Victory");
+        Move(t_queuedMovement.Value, queuedMovement.Value, true);
     }
 }

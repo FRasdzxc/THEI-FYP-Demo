@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class HexagonalTilemapGenerator : MonoBehaviour
 {
@@ -36,13 +37,23 @@ public class HexagonalTilemapGenerator : MonoBehaviour
 
     private void GenerateHexagonalPattern()
     {
-        // Generate home planet first at (0,0,0)
         GenerateHomePlanet();
 
-        // Generate background and planets for each layer
+        if(SceneManager.GetActiveScene().name == "Demo")
+        {
+            GenerateDemoPlanetsNearHome();
+        }
+
         GenerateLayer(innerSpaceTile, innerSpacePlanets, 0);
         GenerateLayer(mediumTile, mediumSpacePlanets, 1);
         GenerateLayer(outerSpaceTile, outerSpacePlanets, 2);
+    }
+
+    private void GenerateDemoPlanetsNearHome()
+    {
+        GeneratePlanet(new Vector3Int(1, 1, 0), innerSpacePlanets);
+        GeneratePlanet(new Vector3Int(2, 1, 0), mediumSpacePlanets);
+        GeneratePlanet(new Vector3Int(3, 1, 0), outerSpacePlanets);
     }
 
     private void GenerateHomePlanet()
@@ -60,6 +71,7 @@ public class HexagonalTilemapGenerator : MonoBehaviour
         homePlanet.hasAlien = false;
         homePlanet.soldiers = 0;
         homePlanet.weaponTier = 0;
+        homePlanet.isHomePlanet = true;
 
         generatedPlanets.Add(homePlanet);
         planetTilemap.SetTile(homePosition, homePlanet.planetSprite);
@@ -183,11 +195,6 @@ public class HexagonalTilemapGenerator : MonoBehaviour
         }
     }
 
-    // Method to get planet data at a specific position
-    public Planet GetPlanetAtPosition(Vector3Int position)
-    {
-        return generatedPlanets.Find(p => p.t_position == position);
-    }
     public List<Planet> GetAllPlanets()
     {
         return generatedPlanets;

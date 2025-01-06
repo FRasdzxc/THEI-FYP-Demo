@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 450a099c120b3c34aa413f2913cd9869, type: 3}
   fuelTank:
     levels:
-    - value: 100
+    - value: 10
       bioMassCost: 100
       asteroidOreCost: 100
       darkMatterCost: 100
@@ -36,17 +36,17 @@ MonoBehaviour:
       solarCrystalCost: 300
   speed:
     levels:
-    - value: 4
+    - value: 5
       bioMassCost: 100
       asteroidOreCost: 100
       darkMatterCost: 100
       solarCrystalCost: 100
-    - value: 5
+    - value: 6
       bioMassCost: 200
       asteroidOreCost: 200
       darkMatterCost: 200
       solarCrystalCost: 200
-    - value: 6
+    - value: 7
       bioMassCost: 300
       asteroidOreCost: 300
       darkMatterCost: 300
@@ -87,17 +87,17 @@ MonoBehaviour:
       solarCrystalCost: 300
   weaponTier:
     levels:
-    - value: 1
+    - value: 0.7
       bioMassCost: 100
       asteroidOreCost: 100
       darkMatterCost: 100
       solarCrystalCost: 100
-    - value: 1.5
+    - value: 0.9
       bioMassCost: 200
       asteroidOreCost: 200
       darkMatterCost: 200
       solarCrystalCost: 200
-    - value: 1.7
+    - value: 1.1
       bioMassCost: 300
       asteroidOreCost: 300
       darkMatterCost: 300

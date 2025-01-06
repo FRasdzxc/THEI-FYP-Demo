@@ -28,6 +28,19 @@ public class InformationRecorder : MonoBehaviour
         }
         return null;
     }
+    public List<Planet> GetAllOwnedPlanets()
+    {
+        List<Planet> planets = tilemapGenerator.GetAllPlanets();
+        List<Planet> ownedPlanets = new List<Planet>();
+        foreach (Planet planet in planets)
+        {
+            if (planet.isOwned)
+            {
+                ownedPlanets.Add(planet);
+            }
+        }
+        return ownedPlanets;
+    }
     public List<Vector3Int> GetAllSpaceships()
     {
         List<Spaceship> spaceships = SpaceshipManager.Instance.GetAllSpaceships();

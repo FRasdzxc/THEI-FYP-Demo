@@ -1,28 +1,24 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
 public class InputHandler : MonoBehaviour
 {
-    public static InputHandler Instance { get; private set; } //Use this Instance to control the spaceship in planet UI
+    public static InputHandler Instance { get; private set; }
+
     private Camera mainCamera;
     private Spaceship selectedSpaceship;
     private Planet selectedPlanet;
     private List<Spaceship> queuedSpaceships = new List<Spaceship>();
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap planetTilemap;
-    [SerializeField] private HexagonalTilemapGenerator tilemapGenerator;
 
     private void Awake()
     {
         if(Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
     private void Start()
     {
@@ -33,101 +29,159 @@ public class InputHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (GameManager.Instance.IsProcessingTurn()) // Disable mouse click when processing turn
-            {
-                return;
-            }
-            Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int cellPosition = groundTilemap.WorldToCell(mouseWorldPos);
-            cellPosition.z = 0;
-            bool isOverUI = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
-            RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
-            if(isOverUI) // Prevent clicking tile under ui
-            {
-                return;
-            }
-            if (hit.collider != null)
-            {
-                Spaceship ship = hit.collider.GetComponent<Spaceship>();
-                if (ship != null)
-                {
-                    HandleSpaceshipSelection(ship);
-                    return; // Exit early if we hit a spaceship
-                }
-            }
-            if (selectedSpaceship != null && MovementIndicator.Instance.IsValidMove(cellPosition))
-            {
-                Vector3 targetPosition = groundTilemap.CellToWorld(cellPosition);
-                selectedSpaceship.Move(cellPosition, targetPosition);
-                AddQueuedSpaceship(selectedSpaceship);
-                return;
-            }
-            // Then check for planet interaction if we didn't hit a spaceship
-            if (planetTilemap.HasTile(cellPosition))
-            {
-                Planet planet = tilemapGenerator.GetPlanetAtPosition(cellPosition);
-                if (planet != null)
-                {
-                    HandlePlanetSelection(planet);
-                    return; // Exit early if we clicked a planet
-                }
-            }
+            HandleMouseClick();
         }
     }
 
+    private void HandleMouseClick()
+    {
+        if (GameManager.Instance.IsProcessingTurn()) // Disable mouse click when processing turn
+        {
+            return;
+        }
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3Int cellPosition = groundTilemap.WorldToCell(mouseWorldPos);
+        cellPosition.z = 0;
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent clicking tile under ui
+        {
+            return;
+        }
+        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
+        if (hit.collider != null)
+        {
+            Spaceship ship = hit.collider.GetComponent<Spaceship>();
+            if (ship != null)
+            {
+                HandleSpaceshipSelection(ship);
+                return; // Exit early if hit a spaceship
+            }
+        }
+        if (selectedSpaceship != null && MovementIndicator.Instance.IsValidMove(cellPosition))
+        {
+            HandleSpaceshipMovement(cellPosition);
+            return; // Exit early if hit path
+        }
+        if (planetTilemap.HasTile(cellPosition))
+        {
+            Planet planet = InformationRecorder.Instance.FindPlanet(cellPosition);
+            if (planet != null)
+            {
+                HandlePlanetSelection(planet);
+            }
+        }
+
+    }
+    #region Spaceship Selection
     public void HandleSpaceshipSelection(Spaceship ship)
     {
         if (selectedSpaceship == ship) // If clicking the same ship that's already selected, deselect it
         {
-            selectedSpaceship.HideMovementRange();
-            selectedSpaceship.OnDeselected();
-            selectedSpaceship = null;
+            DeselectSpaceship();
+            PlanetDetailsUI.Instance.spaceshipInfoPanel.SetActive(false);
         }
         else // If clicking a different ship or no ship was selected
         {
             if (selectedSpaceship != null) // Deselect previous ship if there was one
             {
-                selectedSpaceship.HideMovementRange();
-                selectedSpaceship.OnDeselected();
+                DeselectSpaceship();
             }
-            selectedSpaceship = ship; // Select new ship
-            selectedSpaceship.ShowMovementRange();
-            selectedSpaceship.OnSelected();
+            PlanetDetailsUI.Instance.ShowSpaceshipInfoPanel(ship, true);
+            SelectSpaceship(ship);
         }
     }
+    private void SelectSpaceship(Spaceship ship)
+    {
+        selectedSpaceship = ship;
+        selectedSpaceship.ShowMovementRange();
+        selectedSpaceship.OnSelected();
+    }
 
+    private void DeselectSpaceship()
+    {
+        selectedSpaceship.HideMovementRange();
+        selectedSpaceship.OnDeselected();
+        selectedSpaceship = null;
+    }
+    #endregion Spaceship Selection
+    #region Planet Selection
     private void HandlePlanetSelection(Planet planet)
     {
-        if(selectedPlanet == planet)
+        if (selectedPlanet == planet)
         {
-            selectedPlanet.OnDeselectedPlanet();
-            selectedPlanet = null;
+            DeselectPlanet();
         }
         else
         {
-            // Deselect previous planet if there was one
-            if(selectedPlanet != null)
+            if (selectedPlanet != null)
             {
-                selectedPlanet.OnDeselectedPlanet();
+                DeselectPlanet();
             }
-            // Select new planet
-            selectedPlanet = planet;
-            selectedPlanet.OnSelectedPlanet();
+            SelectPlanet(planet);
+        }
+    }
+
+    private void SelectPlanet(Planet planet)
+    {
+        selectedPlanet = planet;
+        selectedPlanet.OnSelectedPlanet();
+    }
+
+    private void DeselectPlanet()
+    {
+        selectedPlanet.OnDeselectedPlanet();
+        selectedPlanet = null;
+    }
+
+    #endregion Planet Selection
+    #region Spaceship Movement
+    private void HandleSpaceshipMovement(Vector3Int cellPosition)
+    {
+        Vector3 targetPosition = groundTilemap.CellToWorld(cellPosition);
+        selectedSpaceship.Move(cellPosition, targetPosition);
+        if (GetQueuedSpaceships().Count > 0)
+        {
+            foreach (Spaceship spaceship in GetQueuedSpaceships())
+            {
+                if (selectedSpaceship == spaceship)
+                {
+                    RemoveQueuedSpaceship(spaceship);
+                    break;
+                }
+            }
+        }
+        AddQueuedSpaceship(selectedSpaceship);
+        if (planetTilemap.HasTile(cellPosition))
+        {
+            Planet planet = InformationRecorder.Instance.FindPlanet(cellPosition);
+            selectedSpaceship.ReadyForBattle(planet);
         }
     }
     public void AddQueuedSpaceship(Spaceship spaceship)
     {
-        queuedSpaceships.Add(selectedSpaceship);
+        queuedSpaceships.Add(spaceship);
         Debug.Log("Added Queued Spaceship" + " " + spaceship.spaceshipName);
+    }
+    public void RemoveQueuedSpaceship(Spaceship spaceship)
+    {
+        queuedSpaceships.Remove(spaceship);
+        Debug.Log("Removed Queued Spaceship" + " " + spaceship.spaceshipName);
     }
     public List<Spaceship> GetQueuedSpaceships()
     {
         return queuedSpaceships;
     }
+    #endregion Spaceship Movement
     public void ResetValue()
     {
         selectedPlanet = null;
         selectedSpaceship = null;
+        MovementIndicator.Instance.ClearIndicators();
         queuedSpaceships.Clear();
+    }
+    public void ResetForUI()
+    {
+        selectedPlanet = null;
+        selectedSpaceship = null;
+        MovementIndicator.Instance.ClearIndicators();
     }
 }

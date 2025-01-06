@@ -7,7 +7,6 @@ public class SpaceshipManager : MonoBehaviour
 {
     public static SpaceshipManager Instance { get; private set; }
 
-    private Spaceship selectedSpaceship;
     private List<Spaceship> spaceships = new List<Spaceship>();
     [Header("References")]
     public Tilemap groundTilemap;
@@ -47,6 +46,10 @@ public class SpaceshipManager : MonoBehaviour
     public List<Spaceship> GetAllSpaceships()
     {
         return spaceships;
+    }
+    public void RemoveSpaceship(Spaceship spaceship)
+    {
+        spaceships.Remove(spaceship);
     }
 
     public List<Spaceship> GetPlayerSpaceships(int playerId)

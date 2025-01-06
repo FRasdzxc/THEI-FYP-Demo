@@ -5,6 +5,7 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    [Header("Turn")]
     public TextMeshProUGUI turnText;
     public TextMeshProUGUI playerText;
     public Button endTurnButton;
@@ -12,15 +13,16 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         endTurnButton.onClick.AddListener(OnEndTurnClicked);
-        UpdateUI();
+        UpdateTurnUI();
     }
 
     private void Update()
     {
-        UpdateUI();
+        UpdateTurnUI();
+
     }
 
-    private void UpdateUI()
+    private void UpdateTurnUI()
     {
         turnText.text = $"Turn: {GameManager.Instance.currentTurn}";
         playerText.text = $"Player {GameManager.Instance.currentPlayerIndex + 1}'s Turn";
