@@ -17,6 +17,10 @@ MonoBehaviour:
   - TestDelivery
   tierSprites:
   - {fileID: 21300000, guid: b0b12ccc64265854c934a7f964a1550f, type: 3}
+  bioMassCost: 100
+  asteroidOreCost: 100
+  darkMatterCost: 100
+  solarCrystalCost: 100
   fuelTank:
     levels:
     - value: 50

@@ -39,10 +39,10 @@ public class HexagonalTilemapGenerator : MonoBehaviour
     {
         GenerateHomePlanet();
 
-        if(SceneManager.GetActiveScene().name == "Demo")
-        {
-            GenerateDemoPlanetsNearHome();
-        }
+        //if(SceneManager.GetActiveScene().name == "Demo")
+        //{
+        //    GenerateDemoPlanetsNearHome();
+        //}
 
         GenerateLayer(innerSpaceTile, innerSpacePlanets, 0);
         GenerateLayer(mediumTile, mediumSpacePlanets, 1);

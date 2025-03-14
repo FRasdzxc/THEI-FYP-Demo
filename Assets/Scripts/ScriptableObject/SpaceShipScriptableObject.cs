@@ -9,6 +9,12 @@ public class SpaceShipScriptableObject : ScriptableObject
         Scout,
         Combat
     }
+    public enum CaptainType
+    {
+        Tank,
+        Agile,
+        Aggressive
+    }
 
     [System.Serializable]
     public class UpgradeLevel
@@ -31,6 +37,12 @@ public class SpaceShipScriptableObject : ScriptableObject
     public SpaceshipType type;
     public string[] tierNames; // Names for each tier (3 tiers)
     public Sprite[] tierSprites; // Sprites for each tier
+
+    [Header("Creation Costs")]
+    public int bioMassCost;
+    public int asteroidOreCost;
+    public int darkMatterCost;
+    public int solarCrystalCost;
 
     [Header("Base Attributes")]
     public UpgradableAttribute fuelTank;

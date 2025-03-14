@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlanetDetailsUI : MonoBehaviour
 {
@@ -15,7 +16,21 @@ public class PlanetDetailsUI : MonoBehaviour
     [Header("UI Panel")]
     public GameObject gameoverPanel;
     public GameObject detailsPanel;
+
+    [Header("Home Planet")]
+    public GameObject btn_SpaceshipCreation;
     public Button collect;
+
+    [Header("Warning Panel")]
+    public GameObject warningPanel;
+    public TextMeshProUGUI warningText;
+
+    [Header("Spaceship Creation Panel")]
+    public GameObject spaceshipCreationPanel;
+    public Button createSpaceshipButton;
+    public Button cancelSpaceshipButton;
+    private GameObject previousSelected;
+    private string selectedSpaceshipType;
 
     [Header("Spaceship Info")]
     public GameObject spaceshipInfoPanel;
@@ -53,6 +68,7 @@ public class PlanetDetailsUI : MonoBehaviour
     private Planet currentPlanet;
     private List<GameObject> buttons = new List<GameObject>();
 
+    #region Unity Methods
     private void Awake()
     {
         if (Instance == null)
@@ -66,21 +82,6 @@ public class PlanetDetailsUI : MonoBehaviour
         collect.onClick.AddListener(OnCollectClicked);
         HidePanel();
     }
-
-    public void ShowPlanetDetails(Planet planet)
-    {
-        currentPlanet = planet;
-        detailsPanel.SetActive(true);
-        UpdateUI();
-    }
-
-    public void HidePanel()
-    {
-        detailsPanel.SetActive(false);
-        currentPlanet = null;
-        ClearAllButtons();
-    }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -90,9 +91,24 @@ public class PlanetDetailsUI : MonoBehaviour
             InputHandler.Instance.ResetForUI();
         }
     }
+    #endregion Unity Methods
 
-    private void UpdateUI()
+    #region Planet Details Panel Methods
+    public void ShowPlanetDetails(Planet planet)
     {
+        currentPlanet = planet;
+        detailsPanel.SetActive(true);
+        UpdatePlanetDetails();
+    }
+    public void HidePanel()
+    {
+        detailsPanel.SetActive(false);
+        currentPlanet = null;
+        ClearAllButtons();
+    }
+    public void UpdatePlanetDetails()
+    {
+        ClearAllButtons();
         if (currentPlanet.bioMass > 0)
         {
             collect.gameObject.SetActive(true);
@@ -111,11 +127,11 @@ public class PlanetDetailsUI : MonoBehaviour
         }
         if (currentPlanet.isHomePlanet)
         {
-
+            btn_SpaceshipCreation.SetActive(true);
         }
         else
         {
-
+            btn_SpaceshipCreation.SetActive(false);
         }
         // Basic Info
         planetNameText.text = $"{currentPlanet.planetName}";
@@ -139,15 +155,16 @@ public class PlanetDetailsUI : MonoBehaviour
             soldiersText.text = $"{currentPlanet.soldiers}";
             weaponTierText.text = $"{currentPlanet.weaponTier}";
         }
+        ClearAllButtons();
         if(currentPlanet.GetSpaceships().Count > 0)
         {
             foreach(Spaceship spaceship in currentPlanet.GetSpaceships())
             {
-                CreateSpaceshipButton(spaceship);
+                GenerateSpaceshipButton(spaceship);
             }
         }
     }
-    public void CreateSpaceshipButton(Spaceship ship)
+    public void GenerateSpaceshipButton(Spaceship ship)
     {
         GameObject buttonObj = Instantiate(btn_prefab, spaceshipPanel);
         TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
@@ -155,11 +172,11 @@ public class PlanetDetailsUI : MonoBehaviour
 
         buttonText.text = $"Ship {ship.spaceshipName}"; // Assuming ship has a name property
 
-        button.onClick.AddListener(() => OnShipButtonClicked(ship));
+        button.onClick.AddListener(() => OnSpaceshipButtonClicked(ship));
         buttons.Add(buttonObj);
     }
 
-    private void OnShipButtonClicked(Spaceship ship)
+    private void OnSpaceshipButtonClicked(Spaceship ship)
     {
         Debug.Log($"Selected ship: {ship.spaceshipName}");
         InputHandler.Instance.HandleSpaceshipSelection(ship);
@@ -176,15 +193,6 @@ public class PlanetDetailsUI : MonoBehaviour
             }
         }
     }
-
-    private void UpdateHeaderUI()
-    {
-        bioText.text = PlayerInstance.Instance.totalBioMass.ToString();
-        astText.text = PlayerInstance.Instance.totalAsteroidOre.ToString();
-        darText.text = PlayerInstance.Instance.totalDarkMatter.ToString();
-        solText.text = PlayerInstance.Instance.totalSolarCrystal.ToString();
-    }
-
     private void OnCollectClicked()
     {
         PlayerInstance.Instance.AddResources(currentPlanet.bioMass, currentPlanet.asteroidOre, currentPlanet.darkMatter, currentPlanet.solarCrystal);
@@ -193,7 +201,7 @@ public class PlanetDetailsUI : MonoBehaviour
         currentPlanet.darkMatter = 0;
         currentPlanet.solarCrystal = 0;
         UpdateHeaderUI();
-        UpdateUI();
+        UpdatePlanetDetails();
     }
     public void ShowSpaceshipInfoPanel(Spaceship spaceship, bool status)
     {
@@ -208,11 +216,6 @@ public class PlanetDetailsUI : MonoBehaviour
         }
         spaceshipInfoPanel.SetActive(status);
     }
-    public void ShowGameOverPanel()
-    {
-        gameoverPanel.SetActive(true);
-    }
-    // Method to clear all buttons if needed
     public void ClearAllButtons()
     {
         foreach(GameObject button in buttons)
@@ -221,4 +224,117 @@ public class PlanetDetailsUI : MonoBehaviour
         }
         buttons.Clear();
     }
+    #endregion Planet Details Panel Methods
+
+    #region Header UI Methods
+    private void UpdateHeaderUI()
+    {
+        bioText.text = PlayerInstance.Instance.totalBioMass.ToString();
+        astText.text = PlayerInstance.Instance.totalAsteroidOre.ToString();
+        darText.text = PlayerInstance.Instance.totalDarkMatter.ToString();
+        solText.text = PlayerInstance.Instance.totalSolarCrystal.ToString();
+    }
+    #endregion Header UI Methods
+
+    #region Game Over Panel Methods
+    public void ShowGameOverPanel()
+    {
+        gameoverPanel.SetActive(true);
+    }
+    #endregion Game Over Panel Methods
+
+    #region Warning Panel Methods
+    public void ShowWarningMessage(string message)
+    {
+        warningText.text = message;
+        warningPanel.SetActive(true);
+    }
+    #endregion Warning Panel Methods
+
+    #region Button Clicks
+    public void HideWarningPanel()
+    {
+        warningPanel.SetActive(false);
+    }
+    public void ToggleSpaceshipCreationPanel(bool status)
+    {
+        if (status)
+        {
+            spaceshipCreationPanel.SetActive(true);
+        }
+        else
+        {
+            if (previousSelected != null)
+            {
+                Image obj = previousSelected.GetComponent<Image>();
+                if (obj != null)
+                {
+                    Color color = obj.color;
+                    color.a = 0f;
+                    obj.color = color;
+                }
+            }
+            previousSelected = null;
+            selectedSpaceshipType = null;
+            spaceshipCreationPanel.SetActive(false);
+        }
+    }
+    public void InitiateSpaceshipCreation()
+    {
+        if(selectedSpaceshipType == null)
+        {
+            ShowWarningMessage("Please select a spaceship type");
+            return;
+        }
+        switch(selectedSpaceshipType)
+        {
+            case "Scout":
+                SpaceshipManager.Instance.CreateSpaceship(SpaceshipManager.Instance.GetScout(), new Vector3(0, 0, 0), playerId: 1);
+                break;
+            case "Combat":
+                SpaceshipManager.Instance.CreateSpaceship(SpaceshipManager.Instance.GetCombat(), new Vector3(0, 0, 0), playerId: 1);
+                break;
+            case "Delivery":
+                SpaceshipManager.Instance.CreateSpaceship(SpaceshipManager.Instance.GetDelivery(), new Vector3(0, 0, 0), playerId: 1);
+                break;
+        }
+    }
+    public void ButtonVisibile()
+    {
+        if(previousSelected != null)
+        {
+            Image obj = previousSelected.GetComponent<Image>();
+            if (obj != null)
+            {
+                Color color = obj.color;
+                color.a = 0f;
+                obj.color = color;
+            }
+        }
+        GameObject clickedObject = EventSystem.current.currentSelectedGameObject;
+        if (clickedObject != null)
+        {
+            previousSelected = clickedObject;
+            Image obj = clickedObject.GetComponent<Image>();
+            if (obj != null)
+            {
+                Color color = obj.color;
+                color.a = 1f;
+                obj.color = color;
+            }
+        }
+        if(clickedObject.name == "Scout")
+        {
+            selectedSpaceshipType = "Scout";
+        }
+        else if(clickedObject.name == "Combat")
+        {
+            selectedSpaceshipType = "Combat";
+        }
+        else if(clickedObject.name == "Delivery")
+        {
+            selectedSpaceshipType = "Delivery";
+        }
+    }
+    #endregion Button Clicks
 }

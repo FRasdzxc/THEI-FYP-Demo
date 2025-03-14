@@ -7,11 +7,6 @@ public class GameSetup : MonoBehaviour
     [Header("Tilemap")]
     [SerializeField] private Tilemap groundTileMap;
 
-    [Header("Ship Data")]
-    [SerializeField] private SpaceShipScriptableObject deliveryShipData;
-    [SerializeField] private SpaceShipScriptableObject scoutShipData;
-    [SerializeField] private SpaceShipScriptableObject combatShipData;
-
     private void Start()
     {
         SetupInitialShips();
@@ -21,21 +16,24 @@ public class GameSetup : MonoBehaviour
     {
         // Create one of each ship type as an example
         SpaceshipManager.Instance.CreateSpaceship(
-            deliveryShipData,
+            SpaceshipManager.Instance.GetDelivery(),
             GetHexagonalTileCenterPosition(new Vector3Int(0, 0, 0)),
-            playerId: 1
+            playerId: 1,
+            false
         );
 
         SpaceshipManager.Instance.CreateSpaceship(
-            scoutShipData,
+            SpaceshipManager.Instance.GetScout(),
             GetHexagonalTileCenterPosition(new Vector3Int(0, 0, 0)),
-            playerId: 1
+            playerId: 1,
+            false
         );
 
         SpaceshipManager.Instance.CreateSpaceship(
-            combatShipData,
+            SpaceshipManager.Instance.GetCombat(),
             GetHexagonalTileCenterPosition(new Vector3Int(0, 0, 0)),
-            playerId: 1
+            playerId: 1,
+            false
         );
     }
     public Vector3 GetHexagonalTileCenterPosition(Vector3Int tilePosition)

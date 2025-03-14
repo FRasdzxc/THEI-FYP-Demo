@@ -263,7 +263,7 @@ public class Spaceship : MonoBehaviour
     }
     public void ExecuteQueuedMovement()
     {
-        if (queuedMovement.HasValue && !battle)
+        if (queuedMovement.HasValue && !battle) //i think that when spaceship is having a battle, the collider trigger with the current planet and then it 
         {
             if(!gameObject.activeSelf) // in Planet
             {
@@ -308,17 +308,14 @@ public class Spaceship : MonoBehaviour
     }
     public void OnSelected()
     {
-        // Add visual feedback when selected
         if(t_queuedMovement != null)
         {
             MovementIndicator.Instance.ShowSelectedPath(t_queuedMovement.Value);
         }
-        transform.DOScale(1.1f, 0.2f);
     }
     public void OnDeselected()
     {
-        // Remove visual feedback
-        transform.DOScale(1f, 0.2f);
+
     }
     private void OnDestroy()
     {
@@ -369,7 +366,7 @@ public class Spaceship : MonoBehaviour
             Debug.Log($"Spaceship {spaceshipName} engaging aliens on {planet.planetName}!");
         }
     }
-    public bool CheckBattle()
+    public bool IsInBattle()
     {
         return battle;
     }

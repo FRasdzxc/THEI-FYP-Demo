@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 public class InputHandler : MonoBehaviour
@@ -42,7 +41,7 @@ public class InputHandler : MonoBehaviour
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = groundTilemap.WorldToCell(mouseWorldPos);
         cellPosition.z = 0;
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent clicking tile under ui
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent clicking tile under UI
         {
             return;
         }
@@ -59,6 +58,7 @@ public class InputHandler : MonoBehaviour
         if (selectedSpaceship != null && MovementIndicator.Instance.IsValidMove(cellPosition))
         {
             HandleSpaceshipMovement(cellPosition);
+            Debug.Log("Hit path");
             return; // Exit early if hit path
         }
         if (planetTilemap.HasTile(cellPosition))
@@ -66,6 +66,7 @@ public class InputHandler : MonoBehaviour
             Planet planet = InformationRecorder.Instance.FindPlanet(cellPosition);
             if (planet != null)
             {
+                Debug.Log("Hit Planet");
                 HandlePlanetSelection(planet);
             }
         }
@@ -77,7 +78,6 @@ public class InputHandler : MonoBehaviour
         if (selectedSpaceship == ship) // If clicking the same ship that's already selected, deselect it
         {
             DeselectSpaceship();
-            PlanetDetailsUI.Instance.spaceshipInfoPanel.SetActive(false);
         }
         else // If clicking a different ship or no ship was selected
         {
@@ -142,14 +142,14 @@ public class InputHandler : MonoBehaviour
         {
             foreach (Spaceship spaceship in GetQueuedSpaceships())
             {
-                if (selectedSpaceship == spaceship)
+                if (selectedSpaceship == spaceship) //Check spaceship have previous queued movement
                 {
-                    RemoveQueuedSpaceship(spaceship);
+                    RemoveQueuedSpaceship(spaceship); //Remove the old queued movement
                     break;
                 }
             }
         }
-        AddQueuedSpaceship(selectedSpaceship);
+        AddQueuedSpaceship(selectedSpaceship); //Add a new queued movement
         if (planetTilemap.HasTile(cellPosition))
         {
             Planet planet = InformationRecorder.Instance.FindPlanet(cellPosition);
@@ -159,12 +159,10 @@ public class InputHandler : MonoBehaviour
     public void AddQueuedSpaceship(Spaceship spaceship)
     {
         queuedSpaceships.Add(spaceship);
-        Debug.Log("Added Queued Spaceship" + " " + spaceship.spaceshipName);
     }
     public void RemoveQueuedSpaceship(Spaceship spaceship)
     {
         queuedSpaceships.Remove(spaceship);
-        Debug.Log("Removed Queued Spaceship" + " " + spaceship.spaceshipName);
     }
     public List<Spaceship> GetQueuedSpaceships()
     {

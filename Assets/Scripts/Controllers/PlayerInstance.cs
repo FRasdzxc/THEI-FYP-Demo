@@ -63,16 +63,7 @@ public class PlayerInstance : MonoBehaviour
             planet.isOwned = false;
         }
     }
-
-    public List<Spaceship> GetOwnedSpaceships()
-    {
-        return ownedSpaceships;
-    }
-
-    public List<Planet> GetOwnedPlanets()
-    {
-        return ownedPlanets;
-    }
+    #region Getters and Setters
     public int GetTotalBio()
     {
         return totalBioMass;
@@ -89,4 +80,5 @@ public class PlayerInstance : MonoBehaviour
     {
         return totalSolarCrystal;
     }
+    #endregion G
 }

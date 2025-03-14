@@ -38,8 +38,12 @@ public class GameManager : MonoBehaviour
     public void EndTurn()
     {
         if (isProcessingTurn) return;
+        if(InputHandler.Instance.GetQueuedSpaceships().Count <= 0)
+        {
+            PlanetDetailsUI.Instance.ShowWarningMessage("You must move at least one spaceship before ending your turn.");
+            return;
+        }
         PlanetDetailsUI.Instance.HidePanel();
-        PlanetDetailsUI.Instance.ShowSpaceshipInfoPanel(null, false);
         StartCoroutine(ProcessEndTurn());
     }
 
@@ -49,13 +53,14 @@ public class GameManager : MonoBehaviour
 
         yield return StartCoroutine(ExecuteQueuedMovements());
 
-        PlanetsUpdateResources();
-
         if (AreAllSpaceshipsDestroyed())
         {
             EndGame();
             yield break;
         }
+
+        PlanetsUpdateResources();
+
         // Move to next player
         currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers;
 
@@ -77,11 +82,9 @@ public class GameManager : MonoBehaviour
     #region Spaceship
     private IEnumerator ExecuteQueuedMovements()
     {
-        List<Spaceship> spaceships = new List<Spaceship>(InputHandler.Instance.GetQueuedSpaceships());
-
-        foreach (Spaceship spaceship in spaceships)
+        foreach (Spaceship spaceship in InputHandler.Instance.GetQueuedSpaceships())
         {
-            if (spaceship.CheckBattle())
+            if (spaceship.IsInBattle())
             {
                 EventManager.Instance.ProcessAllEvents();
                 yield return new WaitForSeconds(1f);
